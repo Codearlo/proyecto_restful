@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Servicio de API
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=proyecto_api
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - JWT_SECRET=clave_secreta_muy_segura_para_jwt
+      - JWT_EXPIRATION=1h
+    restart: always
+    networks:
+      - app-network
+
+  # Servicio de Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=proyecto_api
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
